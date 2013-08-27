@@ -1,0 +1,297 @@
+\documentclass[9pt]{memoir}
+
+\usepackage[osf]{mathpazo}
+\usepackage[mathcal,mathbf]{euler}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,sidecap,tikz}
+\usepackage{siunitx} % automatic number formatting, decimal point alignment
+
+% To get lining figures in tables set by siunitx, which apparently uses the
+% \mathrm font instead of \mathnormal
+\SetMathAlphabet{\mathrm}{normal}{U}{eur}{m}{n}
+
+% =========================
+% = Setting up the layout =
+% =========================
+
+% With a 9pt body font we want a little extra line spacing (I mean *leading*)
+\setSingleSpace{1.2}
+\SingleSpacing
+
+% Okay, holy crap. Calculating the correct type block height by hand is quite
+% challenging (partially because not all lines are \baselineskip high;
+% apparently the first line is \topskip high?), and \checkandfixthelayout will
+% in the end actually *change* it so that the type block is always an integer
+% multiple of lines. The easiest thing is to set the approximate desired type
+% block height, the width, the left or right margin, the bottom margin, and
+% the headdrop, and then let memoir take care of everything else. Changing the
+% algorithm used to check the layout helps as well.
+\setstocksize{9in}{6in}
+\settrimmedsize{\stockheight}{\stockwidth}{*}
+\settrims{0pt}{0pt}
+
+\settypeblocksize{46\baselineskip}{4in}{*}
+\setlrmargins{*}{0.5in}{*}
+\setulmargins{*}{0.5in}{*}
+
+\setheadfoot{\baselineskip}{\baselineskip} % headheight and footskip
+\setheaderspaces{0.5in}{*}{*} % headdrop, headsep, and ratio
+
+\checkandfixthelayout[lines]
+
+% Set up custom headers and footers
+\makepagestyle{stylish}
+\copypagestyle{stylish}{headings}
+\makerunningwidth{stylish}{5in}
+\makeheadposition{stylish}{flushleft}{flushright}{}{}
+\pagestyle{stylish}
+
+% ============================
+% = Table of contents tweaks =
+% ============================
+\renewcommand*{\contentsname}{Table of Contents}
+\setsecnumdepth{subsubsection}
+\settocdepth{subsection}
+
+% ============
+% = Chapters =
+% ============
+\newcommand{\swelledrule}{%
+    \tikz \filldraw[scale=.015,very thin]%
+    (0,0) -- (100,1) -- (200,1) -- (300,0) --%
+    (200,-1) -- (100,-1) -- cycle;}
+\makeatletter
+\makechapterstyle{grady}{%
+    \setlength{\beforechapskip}{0pt}
+    \renewcommand*{\chapnamefont}{\large\centering\scshape}
+    \renewcommand*{\chapnumfont}{\large}
+    \renewcommand*{\printchapternum}{%
+        \chapnumfont \ifanappendix \thechapter \else \numtoName{\c@chapter}\fi}
+    \renewcommand*{\printchapternonum}{%
+        \vphantom{\printchaptername}%
+        \vphantom{\chapnumfont 1}%
+        \afterchapternum
+        \vskip -\onelineskip}
+    \renewcommand*{\chaptitlefont}{\Huge\itshape}
+    \renewcommand*{\printchaptertitle}[1]{%
+        \centering\chaptitlefont ##1\par\swelledrule}}
+\makeatother
+\chapterstyle{grady}
+
+% See below, after introduction, for \clearforchapter
+
+% Prevent page numbers from appearing on chapter pages
+\aliaspagestyle{chapter}{empty}
+
+% ===================
+% = Marginal labels =
+% ===================
+\strictpagecheck % Turn on robust page checking
+\captiondelim{} % Don't print a colon after "Figure #.#"
+
+\makeatletter
+\renewcommand{\fnum@figure}{%
+    \checkoddpage%
+    \ifoddpage%
+        \makebox[0pt][l]{\hspace{-1in}{\scshape\figurename~\thefigure}}%
+    \else
+        \makebox[0pt][r]{{\scshape\figurename~\thefigure}\hspace*{-5in}}%
+    \fi%
+    }
+\renewcommand{\fnum@table}{%
+    \checkoddpage%
+    \ifoddpage%
+        \makebox[0pt][l]{\hspace{-1in}{\scshape\tablename~\thetable}}%
+    \else
+        \makebox[0pt][r]{{\scshape\tablename~\thetable}\hspace*{-5in}}%
+    \fi%
+    }
+\let\mytagform@=\tagform@
+\def\tagform@#1{%
+\checkoddpage%
+    \ifoddpage%
+    \makebox[1sp][l]{\hspace{-5in}\maketag@@@{(\ignorespaces#1 \unskip \@@italiccorr)}}%
+    \else
+    \makebox[1sp][r]{\maketag@@@{(\ignorespaces#1 \unskip \@@italiccorr)}\hspace*{-1in}}%
+    \fi%
+    }
+\renewcommand{\eqref}[1]{\textup{\mytagform@{\ref{#1}}}}
+\makeatother
+
+\usetikzlibrary{arrows,positioning,decorations.pathmorphing,trees}
+
+\begin{document}
+
+\frontmatter
+\thispagestyle{empty}
+
+\mbox{}\vspace{2in}
+\noindent
+\begin{flushright}
+{\LARGE\itshape{}a}\hspace{1.5em}{\HUGE\scshape{}Book}\\[2\baselineskip]
+{\LARGE\itshape{}of}\hspace{1.5em}{\Huge\scshape{}Fascinating Facts}
+\end{flushright}
+
+\vspace{6\baselineskip}
+\hfill{\Large\scshape{}Abner Stract}
+
+\cleartorecto\tableofcontents*
+
+\mainmatter
+
+\chapter{The First Fascinating Fact}
+``Lorem ipsum'' is not even really Latin. But, nonetheless, lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Ut eu dapibus erat. Maecenas ut odio congue, volutpat odio euismod, rhoncus erat. Nulla facilisi. Quisque aliquam ligula et justo luctus varius. Aenean tempus ullamcorper vulputate. Duis eu felis id arcu volutpat iaculis. Proin ornare rhoncus mi quis feugiat.
+
+Suspendisse magna nibh, ultricies non volutpat vitae, cursus non magna. Nullam quis ultrices ante, sed porttitor mi. Donec id elit sed quam aliquam commodo sit amet vel purus. Suspendisse placerat urna arcu, a blandit purus cursus eu. Suspendisse non orci a lacus mattis rutrum. Quisque feugiat blandit nisi. Aenean condimentum sed arcu nec egestas. Pellentesque tempor leo quis sapien consectetur, a hendrerit ligula tincidunt.
+
+Maecenas nec purus nec nunc elementum cursus. Quisque pulvinar congue ultricies. Donec aliquet nunc quis condimentum venenatis. Quisque scelerisque est massa, nec tempor felis gravida non. Quisque non elit dolor. Suspendisse faucibus tortor mauris, eget tincidunt tellus lacinia egestas. Pellentesque aliquet neque eget mauris mollis dictum. Pellentesque ullamcorper arcu nec semper pharetra. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Duis sit amet nisl sit amet arcu gravida pulvinar. Aenean mattis gravida elit, non semper diam ultricies tempor. Aliquam aliquam lacus blandit mauris luctus, iaculis posuere mi ultricies. Aliquam at ligula at nulla condimentum blandit at vel orci. Maecenas enim ligula, varius eget mauris et, condimentum ullamcorper leo. Cras cursus semper turpis. Fusce ullamcorper urna non enim facilisis vehicula.
+
+Etiam pulvinar elit a hendrerit adipiscing. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam in quam mauris. Vivamus eu tellus arcu. Vivamus sagittis risus eu nisl accumsan, sit amet volutpat metus mollis. Aenean tincidunt nisi at ipsum dignissim, id varius nibh dignissim. Mauris eget pulvinar ipsum. Mauris laoreet sollicitudin dignissim. Aenean mattis porttitor pharetra. Etiam id ultrices risus. Praesent sit amet odio id tortor egestas volutpat at eu lacus. Praesent sollicitudin justo ut ligula mattis, quis euismod diam rhoncus.
+
+Integer et ante purus. Sed auctor ipsum turpis, a tincidunt purus pulvinar sed. Morbi ultrices elit eget diam facilisis, pretium ultrices arcu dictum. Aenean id nibh ligula. Nullam ac faucibus augue. In in dolor dapibus, eleifend erat et, gravida velit. Mauris tincidunt libero ac vehicula tristique. Suspendisse in ligula felis. Nunc volutpat libero elit, quis dictum libero tincidunt nec. Maecenas ultrices fermentum mauris, non accumsan ipsum aliquam iaculis. Fusce at turpis risus. Mauris ultricies libero adipiscing nisl rutrum blandit. Proin id euismod justo, quis faucibus nulla. Aenean varius luctus magna nec bibendum. Proin in augue nisl.
+
+\begin{figure}
+\begin{adjustwidth*}{-1in}{0pt}
+\centering
+\begin{tikzpicture}[domain=-0.62:10.85,decoration={random steps,segment length=1pt,amplitude=0.3pt}]
+    \draw[very thin,color=gray,decorate] (-1.25,-1.25) grid (11.25,1.25);
+    \draw[color=orange,decorate] plot (\x,{sin(\x r)});
+\end{tikzpicture}
+\end{adjustwidth*}
+\caption{This is a figure, simple and poorly drawn by my computer. The lines, intended to be physical representations of the glittering abstraction of pure length, have come out wobbly, like a plum pudding with too much plum. I will send my computer back to arithmetic class.}
+\end{figure}
+
+Sed nec enim vitae magna sagittis ullamcorper quis non nisl. Pellentesque at consequat metus. Pellentesque tincidunt odio quis lacus rutrum, et laoreet risus pretium. In a vestibulum orci, sit amet tempor leo. Maecenas varius est at magna bibendum, eu luctus tellus luctus. Quisque vitae libero imperdiet, bibendum massa at, suscipit diam. Phasellus auctor laoreet blandit. Duis suscipit orci nec dui lobortis, cursus vestibulum lectus dignissim. Nullam commodo purus quis enim viverra, nec hendrerit quam dictum. Donec a ultrices ligula. Nunc nec elementum diam. Nam congue blandit nisi scelerisque aliquam.
+
+Aliquam in orci fermentum mauris auctor dapibus. Duis tincidunt tortor quis nunc iaculis dictum. Duis a eros consectetur, facilisis odio sit amet, gravida nunc. Nulla vel pretium arcu, nec luctus mi. Suspendisse iaculis magna at nibh ultrices faucibus. Nullam pellentesque velit sapien, sagittis molestie elit volutpat in. Suspendisse potenti. Integer felis enim, suscipit sit amet massa nec, aliquam tristique mauris. Praesent fringilla consequat lectus, a iaculis augue consequat vitae. Maecenas adipiscing porta scelerisque. Integer eleifend dui eu placerat varius. Nam a nunc quis odio hendrerit placerat id non elit. Mauris suscipit suscipit sapien, id ullamcorper arcu hendrerit faucibus.
+
+Sed vitae est auctor, malesuada est at, scelerisque ipsum. Donec vulputate auctor vulputate. Fusce vehicula dolor a interdum ornare. Suspendisse euismod dapibus nibh, a adipiscing magna rhoncus sed. Nulla ac quam urna. Mauris ornare elit non porta fermentum. Etiam elementum, lectus non vestibulum tempus, urna eros scelerisque metus, eget congue metus lorem ut lectus. Suspendisse id elit nec ipsum consequat rhoncus. Ut lectus mi, mollis eu quam vitae, posuere ullamcorper metus. Suspendisse non nisi vel nulla lacinia interdum.
+
+Etiam fermentum augue et pulvinar ultricies. Aenean ut commodo enim. Ut vel turpis eu nisl sagittis facilisis. Nullam porttitor varius magna ac porttitor. Nunc eget augue dolor. Cras sagittis eget sapien at aliquam. Integer vel nunc quis lorem blandit congue. Fusce tristique volutpat leo, at lacinia purus ultricies ut. Nulla imperdiet odio at adipiscing ultrices. Morbi magna nisl, pretium mattis hendrerit vel, pharetra non risus. Proin egestas pharetra dolor, sed dictum nulla condimentum eu.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc quis sem ullamcorper tortor bibendum vestibulum lobortis ut justo. Maecenas eu lobortis felis. Cras in sagittis lacus. Ut quis laoreet risus. Etiam dui lectus, suscipit ut dui et, ullamcorper condimentum purus. Suspendisse volutpat ipsum metus. Curabitur tempus erat vel ante scelerisque varius.
+
+
+
+\chapter{The Second Fascinating Fact}
+This chapter is all about numbers (cf Table~\ref{tab:the-numbers}). Because, through hermetic machinations, these numbers reveal a hidden truth, we will discuss them in a dreamed language.
+
+\begin{table}
+\begin{tabular}{
+    r
+    S[table-format=1.3]
+    S[table-format=3.5e-1]
+    S[table-format=1.4]
+    S[table-format=-1.5]
+}\toprule
+Frankness  & {$\aleph_0$} & {Widgets \& Bobbins} & {$\Delta_{\text{funk}}$} & {$r$}    \\ \midrule
+Crows      & 5.897        & 0.3692               & 0.4679                   & -0.1367  \\ 
+Malaise    & 5.128        & 1.692e-05            & 0.6395                   & -0.06257 \\ 
+Lantern    & 6.334        & 0.7099               & 0.57                     & -0.1425  \\ 
+Rushing    & 15.11        & 0.01569              & 0.3576                   & 0.01739  \\ \midrule
+Splinters  & 3.753        & 1.084                & 0.2924                   & -0.1632  \\ 
+Brilliant  & 3.174        & 1.061e+04            & 0.2827                   & -0.2533  \\ 
+Still      & 3.192        & 1.795e+04            & 0.3066                   & -0.1173  \\ 
+\midrule
+Quickening & 2.93         & 250.6                & 0.999                    & -0.02164 \\ 
+Barter     & 3.437        & 6.625e-06            & 0.8351                   & -0.6018  \\ 
+Promise    & 9.753        & 16.03                & 0.5062                   & 0.1852   \\ 
+\bottomrule
+\end{tabular}
+
+\caption{These are the numbers that this chapter is all about. As you can see, they are very interesting. Ponder.}
+\label{tab:the-numbers}
+\end{table}
+
+Cras venenatis lorem quis mi luctus dignissim. Cras sed rutrum libero, ac auctor libero. Aliquam at aliquam nisi, at viverra justo. Donec lobortis fermentum suscipit. Ut quis mollis nibh. Aenean placerat ac leo a rutrum. Nam pharetra faucibus urna, vel ornare lectus convallis vitae.
+
+Praesent dui purus, molestie et egestas vel, aliquam et lorem. Suspendisse accumsan tortor eu arcu pharetra consequat non non lacus. Aliquam erat volutpat. Donec sodales molestie mi vitae aliquam. Proin congue quis enim non interdum. Sed viverra, mi in pharetra pellentesque, quam mauris commodo lectus, nec ultricies diam mi eget nulla. Maecenas sodales interdum viverra. Mauris consequat orci id malesuada accumsan. Maecenas a ligula fringilla, placerat risus id, suscipit orci. Interdum et malesuada fames ac ante ipsum primis in faucibus. In hac habitasse platea dictumst. Nam nec sem tincidunt, posuere tortor ac, egestas arcu.
+
+Donec non augue consequat, sagittis lectus in, varius massa. Aenean rutrum euismod ipsum. Nam at arcu neque. Sed leo metus, vestibulum non molestie vel, ultrices iaculis sem. Pellentesque sed pulvinar massa. Duis at placerat augue. Nunc quis nunc adipiscing, facilisis felis eu, eleifend ante.
+
+Sed pharetra quam facilisis, rhoncus libero quis, elementum tellus. Etiam tellus massa, blandit a luctus nec, bibendum in ante. Phasellus porttitor, eros nec pulvinar commodo, erat orci ultrices erat, nec accumsan felis felis placerat lacus. In gravida dolor vel diam consectetur rutrum. Ut hendrerit ante ac aliquam aliquam. Mauris eleifend mauris ac orci lacinia lacinia. Interdum et malesuada fames ac ante ipsum primis in faucibus. Curabitur id tristique est. In vestibulum felis eu erat tempor semper. Vestibulum sollicitudin molestie purus non vehicula. Nunc eget aliquet metus. Nulla non ante ut nibh cursus feugiat.
+
+Proin hendrerit vestibulum orci ut hendrerit. Sed ornare, magna et convallis euismod, nunc odio pharetra sapien, vitae ornare tellus eros sed magna. Nulla orci tortor, ultricies non orci convallis, mattis pharetra massa. Donec interdum justo id risus tincidunt auctor. Duis vulputate erat eros, eu varius eros lacinia nec. Fusce et gravida mauris, ut hendrerit odio. Quisque semper lacus lectus, id adipiscing risus facilisis at.
+
+\section{A digression}
+Nulla ut tempor orci. Praesent consequat sit amet elit nec volutpat. Mauris at nunc arcu. Proin luctus massa sed sapien pretium porta nec vel dolor. Mauris non dui eros. Pellentesque mollis fringilla dui, vel congue dolor dapibus nec. Nam sollicitudin odio tortor, et dictum dolor bibendum nec.
+
+Sed malesuada urna augue. Mauris vestibulum lectus ipsum, dignissim auctor nisi imperdiet at. Vestibulum facilisis iaculis felis, quis scelerisque odio sagittis id. Nunc non sapien lacinia, fermentum dui non, sagittis augue. Ut non nisi consectetur, hendrerit odio quis, tincidunt ante. In lacinia elit sed ligula elementum, vitae consequat neque pulvinar. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam porta quis libero sit amet venenatis. Curabitur quis interdum lorem, in eleifend dui. Donec in arcu sodales, vehicula ipsum fermentum, pharetra nibh. Sed porttitor elit vel orci eleifend elementum. Integer aliquet arcu quis nunc facilisis malesuada. Praesent at nisl felis.
+
+\subsection{Point}
+Mauris tristique tortor a gravida cursus. Sed non urna a mauris fringilla ullamcorper. Praesent commodo urna nec elit elementum, vel tincidunt mi blandit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent lectus mauris, fermentum non arcu nec, fermentum lacinia libero. Maecenas vitae hendrerit massa. Curabitur pharetra ipsum ut ligula tempus, ac commodo justo laoreet. Cras viverra, orci at dapibus blandit, massa lacus tincidunt leo, laoreet dictum justo libero eu tortor.
+
+Proin tincidunt justo fermentum dignissim accumsan. Cras porttitor orci nunc, nec fringilla mauris posuere vel. Curabitur mi mi, aliquam ac lectus sit amet, blandit euismod nulla. Maecenas sollicitudin fringilla dignissim. Aliquam erat volutpat. Aliquam at elementum arcu, quis scelerisque orci. Integer ultrices, nisl sit amet sagittis posuere, erat odio tincidunt justo, eu porttitor sapien risus vitae risus. Quisque id nibh sollicitudin, aliquet risus at, semper elit. Donec porttitor arcu eu diam placerat, sit amet blandit tellus gravida. Aliquam ornare vitae libero vitae mollis. Sed ante leo, venenatis nec felis sed, semper adipiscing ipsum. Vivamus et pulvinar nibh. Mauris viverra tortor vitae lacus ullamcorper, in iaculis sapien egestas. Donec dapibus in odio at tempus. Nulla laoreet, metus ac dapibus euismod, leo arcu gravida massa, nec adipiscing lorem urna a risus.
+
+\subsection{Counterpoint}
+Nam vitae porta ante, vitae tincidunt sapien. Fusce scelerisque arcu sem, nec facilisis nisi commodo porta. Etiam vulputate sed enim eu vestibulum. Donec placerat est id elit elementum ultricies. Ut arcu lorem, iaculis nec odio ut, porta pharetra ante. Sed metus purus, lacinia nec mattis et, placerat sed sem. Integer rutrum consequat nulla, id consectetur tortor scelerisque nec. Integer nec odio suscipit, tincidunt elit at, cursus enim. Curabitur id aliquam dui, quis porttitor risus. Ut commodo risus quis posuere adipiscing. Sed eget ipsum sapien. Donec lacinia elit hendrerit euismod euismod. Fusce semper quam ut lorem venenatis accumsan. Duis posuere, urna quis mollis tristique, metus tellus laoreet nunc, et vestibulum sapien nulla sed neque.
+
+In ut nisl vestibulum, tincidunt enim et, lacinia ante. Praesent feugiat nibh sem, vel porttitor nunc auctor vitae. Suspendisse dictum, lorem nec pulvinar auctor, dui mi vulputate ligula, tincidunt faucibus odio eros vel orci. Praesent vitae adipiscing urna, nec tristique nulla. Fusce bibendum quis ipsum eget aliquam. Donec pretium nisi eu tortor varius, mollis dignissim eros viverra. Nulla vulputate facilisis magna et egestas. Nullam facilisis nec libero ut adipiscing. Phasellus mollis tellus nec urna ornare euismod.
+
+Aenean ut eros lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris pretium, mauris vel volutpat volutpat, diam ipsum suscipit ante, vel semper lacus enim in felis. Nullam viverra pharetra tincidunt. Fusce metus purus, molestie et risus eu, interdum sollicitudin risus. Nulla pretium augue a mi faucibus congue. Vivamus risus diam, pulvinar sit amet sagittis eu, vulputate et ipsum. Nam vitae fermentum lectus. Curabitur nec malesuada risus. Vestibulum enim felis, scelerisque a pellentesque ut, vestibulum eu risus. Nulla dictum metus quis nisl aliquet semper. Etiam in laoreet augue. Donec tempor, tellus vel eleifend placerat, libero diam placerat mauris, sed fermentum mauris nunc eget diam.
+
+\subsection{Harmony}
+Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean viverra pulvinar magna, a blandit arcu accumsan vel. Donec auctor nisi in dolor ornare, in dapibus lacus aliquam. Maecenas quis risus in nisi placerat commodo ac at dui. Integer porta, odio ut ultricies varius, urna neque accumsan odio, id suscipit quam magna non sapien. Mauris viverra justo id orci congue, tincidunt ullamcorper lacus adipiscing. Aenean laoreet convallis diam nec scelerisque. Fusce cursus, purus lacinia venenatis mollis, magna lectus lacinia eros, at posuere enim ante at ligula. Suspendisse in scelerisque metus, nec auctor arcu.
+
+Fusce eleifend ultrices libero. In semper, risus eget euismod feugiat, quam metus ultricies nunc, in dapibus velit sem at neque. Maecenas at nunc vel nisl elementum cursus sit amet eget arcu. Praesent ultrices, arcu id facilisis consectetur, nunc enim convallis nunc, nec aliquam mauris ligula in magna. Nunc quis nunc leo. Nulla in enim eget tellus aliquet iaculis. Phasellus suscipit ante vel accumsan lobortis. Sed sit amet scelerisque magna. Nam vulputate est et sapien tristique fermentum. Duis vel dignissim erat. Nullam auctor nisl a nulla pellentesque, consectetur volutpat turpis ornare. Mauris fermentum pretium risus, non euismod nibh mattis in. Sed vulputate, purus vitae mattis pretium, erat justo sagittis nulla, quis rutrum ligula metus eget odio. Fusce vel nunc scelerisque risus lacinia consectetur id semper odio. Vivamus fringilla arcu id eros pretium, pellentesque porta dui porta.
+
+Nulla sollicitudin ut orci sit amet laoreet. Aliquam eu sem in leo hendrerit venenatis sit amet mattis justo. Fusce adipiscing euismod libero at dignissim. Vivamus laoreet nisi vitae tellus porttitor vulputate. Praesent a pellentesque dui. Vivamus facilisis tellus sem, ac dictum magna hendrerit at. Pellentesque at ipsum at ante fringilla sodales ac in arcu. Ut ut rutrum turpis, et dapibus magna. Sed metus eros, interdum tempus suscipit nec, condimentum a nunc. Sed non quam vel dui scelerisque porttitor sit amet quis ipsum. Integer mauris orci, ultrices a neque ac, vestibulum placerat odio. Nunc metus lectus, fringilla vel nulla sit amet, mollis ornare diam.
+
+\section{A regression}
+Cras aliquam molestie dui, non venenatis nulla consectetur et. Nulla convallis diam dui, nec tristique ligula volutpat sit amet. Cras quam erat, faucibus eu feugiat in, dignissim at diam. Duis sit amet lectus in lorem faucibus tincidunt ac vitae eros. Cras tristique fermentum lorem sollicitudin dignissim. Donec feugiat felis porttitor lorem volutpat, at tristique ante ultricies. Maecenas tellus massa, scelerisque at dolor a, tempus tempor urna. Praesent sodales congue sem id interdum.
+
+Vestibulum vel orci eu lectus luctus vestibulum non at lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus euismod adipiscing hendrerit. Donec eu tempor odio. Suspendisse orci risus, aliquam sit amet adipiscing nec, sollicitudin in purus. Maecenas malesuada laoreet nunc eu feugiat. Nullam fringilla convallis adipiscing. Donec et sem dolor. Proin commodo pharetra leo vel semper. Phasellus posuere massa sed imperdiet vestibulum. Ut ultrices pulvinar leo id hendrerit. Pellentesque volutpat eu libero vitae lobortis. Mauris cursus sem mauris, vel mollis lacus elementum quis.
+
+Morbi ullamcorper, nisi eget tempor venenatis, orci nisl ultrices est, nec eleifend ante neque id ligula. Vestibulum ut purus ut metus ornare pretium. Vestibulum eleifend, urna sit amet semper consectetur, arcu nibh fringilla velit, a aliquet enim erat in arcu. Nam tincidunt sapien in ipsum hendrerit, id ornare massa laoreet. Sed ultrices lorem ac egestas sagittis. Integer aliquet imperdiet elit, convallis lacinia dolor consectetur eu. Nam lacinia quam magna, at fringilla elit egestas id. Integer eget felis ac quam blandit fringilla vel at tortor. Vivamus pulvinar hendrerit enim et vehicula. Pellentesque tempor tristique enim, vitae blandit sem consequat vitae. Aliquam fringilla vehicula arcu. Praesent erat nunc, ornare sit amet tempus nec, facilisis ac dui. Phasellus vestibulum dui orci, quis volutpat neque vulputate eu.
+
+\begin{equation}
+E = m \sqrt{c}
+\end{equation}
+
+Maecenas ligula tellus, consequat vitae lacus et, malesuada lobortis diam. Vestibulum ultricies convallis lacus, tempor ullamcorper arcu faucibus id. Quisque consectetur nisl nec risus tincidunt tristique. Etiam vel dolor mattis, facilisis tellus ac, convallis elit. Phasellus volutpat posuere metus id placerat. Sed nisi mi, egestas quis lacus eu, vulputate vulputate arcu. Aliquam sed mauris bibendum, laoreet nibh at, volutpat diam. Ut dapibus euismod arcu. Duis tincidunt placerat metus et ultricies. Duis eget vehicula est, ac hendrerit lorem. Morbi tincidunt molestie dui vitae luctus. Aliquam eu lacinia lacus. Nulla non ornare elit. Fusce cursus rutrum lorem, vel venenatis orci scelerisque ac. Aenean quis pretium massa, in pellentesque metus.
+
+In tincidunt nibh vel nisi pharetra egestas. Praesent lectus lacus, ultrices a venenatis sed, vestibulum sagittis est. Maecenas diam tellus, porta vitae ipsum sit amet, suscipit hendrerit orci. Integer cursus tincidunt urna. Vivamus non tristique mauris, vulputate volutpat massa. Maecenas lorem nisi, feugiat eget pharetra tristique, mollis a justo. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque euismod, lorem a euismod tempus, sem risus fringilla tellus, sed porta sem eros non nibh. Curabitur aliquam lectus vitae orci scelerisque, sed ultricies justo pretium. Praesent sed metus urna. Sed risus elit, dignissim sit amet tristique et, iaculis ac leo.
+
+Cras eget pellentesque orci. Donec eget placerat est. Suspendisse vitae massa sodales, semper odio vitae, faucibus nisi. Cras faucibus hendrerit adipiscing. Fusce euismod bibendum consectetur. Aenean pellentesque in quam ac ornare. Pellentesque tristique nunc mauris, nec mattis lectus varius sit amet. Sed blandit ipsum enim, in condimentum est lacinia vitae. Etiam metus eros, pellentesque ac auctor id, congue id ipsum. Phasellus hendrerit ante quis velit viverra, ut ultrices ipsum convallis.
+
+Morbi eget quam tincidunt, congue velit at, placerat metus. Fusce pulvinar aliquam venenatis. Maecenas sed aliquet lectus. Pellentesque varius quam vitae posuere sollicitudin. Maecenas sed nisi urna. Fusce sed sollicitudin mauris, sed varius eros. Vestibulum vulputate vehicula massa sit amet commodo. Morbi pulvinar sem ut auctor ornare. Curabitur pretium pulvinar elit nec ornare. Phasellus ultricies leo elementum velit semper, et lobortis libero semper. Etiam quis euismod erat. Maecenas hendrerit, ligula ut vestibulum placerat, mauris velit dapibus elit, ut viverra metus nunc pretium ante. Curabitur id felis eu erat facilisis egestas lacinia ut mauris. Etiam sed nibh euismod erat consectetur elementum consectetur non lorem. Suspendisse malesuada ut risus non sagittis.
+
+\section{A plaintive call for humanity}
+Cras sollicitudin feugiat erat a gravida. Sed non nulla quis felis iaculis aliquam. Morbi congue, justo non blandit auctor, augue turpis venenatis massa, in gravida lacus sem vitae turpis. Nulla semper, neque in mollis dignissim, quam felis aliquam libero, dictum semper nisl tellus vel mauris. Nam aliquet molestie eros, quis venenatis metus imperdiet nec. Nunc nec consectetur urna. Donec vitae erat eu nunc lacinia vulputate sit amet quis libero. Nunc feugiat in ante iaculis tincidunt. Pellentesque non gravida magna, non pulvinar mauris. Nullam consectetur quam sit amet est elementum sollicitudin.
+
+Pellentesque vitae sollicitudin mi. Mauris diam elit, ultricies ut tristique eget, viverra vitae ligula. Curabitur scelerisque eleifend eros vel aliquet. Phasellus auctor, tortor a accumsan aliquet, diam mauris gravida lectus, vel congue sapien ipsum id ligula. Quisque eget rhoncus quam. Nullam et sem iaculis, dictum eros viverra, facilisis justo. Maecenas in libero lectus. Nullam vel ornare dui. Integer at velit ipsum. Nunc lobortis tempus nulla, ut aliquam velit laoreet vitae. Sed quis dapibus augue, vel convallis justo. Donec ac pharetra velit. Cras vel risus ut lorem sollicitudin vestibulum ut ac lacus. Suspendisse potenti. Cras luctus mi vitae pellentesque scelerisque.
+
+Vestibulum semper placerat lectus, sed laoreet elit malesuada a. Aenean accumsan, nulla blandit facilisis feugiat, risus quam posuere enim, auctor volutpat diam magna id tellus. Suspendisse eu accumsan sapien, sed vehicula risus. Proin a eros sit amet risus rutrum vulputate. Integer dui est, vulputate eget lacus nec, rutrum iaculis sem. Mauris fermentum lectus nec sem euismod, sit amet tempus enim sodales. In sit amet condimentum sem, at ornare purus. Ut eget tristique nisl. Sed blandit, orci quis lacinia gravida, ante magna dapibus orci, vel scelerisque elit lacus quis arcu. Morbi at rutrum velit.
+
+Praesent ac metus condimentum, semper lectus ut, luctus dolor. Sed semper ipsum turpis, nec rhoncus enim dapibus ac. Praesent eu ornare eros, quis suscipit neque. Donec at nisi posuere, rutrum diam ac, ornare est. Duis adipiscing pretium mollis. Maecenas pellentesque nunc sed tellus vulputate lacinia. Proin nec ante laoreet, lobortis diam eu, dapibus tellus. Donec ultricies nulla magna, nec posuere nunc pretium id. Nulla eu massa ut nisi imperdiet ultricies. Quisque placerat eros justo, in accumsan nisl rhoncus nec. In volutpat non leo sit amet ultricies. Pellentesque nec semper leo. Nulla sit amet arcu vel risus porttitor malesuada.
+
+Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aliquam dapibus rutrum egestas. Integer nec pharetra tellus, non vestibulum mi. Proin ornare ligula velit. Vivamus est libero, aliquam quis tristique et, sodales in enim. Sed placerat arcu erat, et eleifend nisi ultrices ut. Ut aliquet pulvinar turpis, non iaculis enim tempus ac.
+
+Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris at tellus lorem. Sed mauris nunc, mollis eu velit eu, dapibus faucibus diam. Ut ultricies laoreet posuere. Nam malesuada condimentum quam vitae eleifend. Proin venenatis placerat massa, sed tempus libero adipiscing at. Nulla non urna accumsan, accumsan urna vel, lacinia mi. Sed a scelerisque odio. Ut at ullamcorper urna, ultrices sodales metus. Nullam nulla ante, tempus non dictum blandit, mollis nec elit. Nam ullamcorper enim ipsum, id sodales purus aliquam vitae. Phasellus nunc metus, ultricies eu tempor vel, rhoncus eu tortor. In luctus quam et congue laoreet.
+
+Nam libero dolor, euismod non lorem eu, consectetur feugiat dui. Nunc erat ligula, vestibulum eu tellus at, ultricies egestas urna. Nam dapibus consequat mauris sit amet condimentum. Donec quam lorem, pretium vitae nisl et, posuere varius tortor. Duis ultricies orci ut arcu suscipit, eget tempor nisl sollicitudin. Donec sit amet aliquam libero, vitae rhoncus magna. Ut elementum odio sed tempus rhoncus. Cras sagittis eu tortor sed dictum. Aliquam erat volutpat. Vestibulum quis est vitae justo semper malesuada. Vivamus varius pulvinar iaculis. Nunc fringilla augue risus, sit amet rutrum augue eleifend sit amet. Cras quis volutpat erat, ac luctus urna. Aliquam molestie tortor interdum tortor porta tincidunt. Proin vitae iaculis orci. Vivamus erat lectus, consequat viverra urna non, dignissim semper purus.
+
+Etiam porttitor lacus orci, non eleifend risus ornare ac. Vestibulum ultrices lectus volutpat congue molestie. Etiam bibendum nulla varius, vestibulum metus sit amet, vestibulum nisl. Fusce facilisis odio nisi, ut suscipit mauris porttitor at. Maecenas quam purus, fermentum sed turpis id, iaculis vulputate augue. Vestibulum porttitor quam venenatis placerat facilisis. Aliquam vel rutrum diam. Donec malesuada commodo vestibulum. Mauris quis mauris venenatis, pulvinar tellus non, gravida tortor.
+
+Morbi vulputate non nulla eu sollicitudin. Quisque dictum diam porttitor vehicula suscipit. Phasellus vitae mi congue, ornare magna vel, convallis libero. Nullam non vehicula nunc. Phasellus fringilla, lacus id malesuada viverra, lacus turpis aliquam ligula, non adipiscing enim leo sit amet ligula. Phasellus faucibus ante nulla, ac malesuada est ornare et. Pellentesque dictum tellus et ligula tempor interdum. In ornare massa mi, in vehicula justo sodales id. Ut dignissim pretium purus, sit amet aliquet risus tristique et. Vivamus viverra arcu ut mauris euismod ultricies. Fusce tortor velit, gravida consequat urna at, ornare porttitor sem.
+
+Aliquam ut risus a urna vestibulum lobortis vel sit amet magna. Nam et elementum nulla, non dictum nisl. Suspendisse potenti. Nulla fermentum est leo, et scelerisque nulla accumsan ut. Nam interdum lorem eget rutrum molestie. Vivamus bibendum, risus in aliquam malesuada, dui est porttitor arcu, at tempus nisi magna et augue. Nulla convallis condimentum massa, et dignissim nisl bibendum sed. Maecenas ac nunc tempor, porttitor lorem sit amet, posuere sem. Integer gravida lorem nec tincidunt ultrices.
+
+Proin porta tincidunt ligula. Donec varius metus et felis tincidunt, pharetra volutpat nisi lacinia. Quisque id massa velit. Nam non justo quis est imperdiet gravida. Ut luctus ornare nisl, eget placerat neque congue quis. Donec massa eros, gravida eu nibh id, condimentum bibendum tortor. In sollicitudin mauris eget nisl bibendum, ut suscipit lacus sollicitudin. Phasellus rhoncus venenatis mauris, et scelerisque neque sagittis gravida. Nam sodales, nisi ut aliquet fringilla, felis augue ultricies ante, non consequat nibh nunc eu mauris. Donec eu arcu odio.
+
+Sed dapibus non leo eget porta. Nunc a justo enim. Nam non fermentum elit. Integer in nulla turpis. Ut facilisis, purus ut varius hendrerit, magna augue aliquet nisi, eget varius urna ante sed nulla. Vestibulum ac eros lorem. Etiam imperdiet nibh eu tempus semper. Donec venenatis non orci eu lacinia. Nunc feugiat tellus est, et dictum odio vehicula a. Quisque sagittis tempor ultrices. Sed accumsan sollicitudin arcu, quis auctor dui auctor sed. Aliquam et ligula leo. Sed bibendum enim quis varius egestas. Sed feugiat ipsum purus, eget ullamcorper massa dictum ut. Ut semper lorem lectus, a pretium libero pharetra ac.
+
+Donec et magna pharetra, consequat magna ut, egestas lorem. Etiam egestas ornare mi, vitae aliquam orci tincidunt nec. Donec sit amet leo nisi. Aliquam quis odio convallis, ullamcorper risus quis, ullamcorper mi. Vestibulum tincidunt semper vulputate. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec dui bibendum, aliquet sem ut, blandit nibh.
+
+Maecenas tincidunt sem a turpis vestibulum, quis ultrices dui feugiat. Duis mauris purus, elementum id ipsum ac, laoreet tristique eros. In suscipit sed justo nec consequat. Vestibulum aliquam malesuada tristique. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed blandit nunc eget purus tempor convallis. Vestibulum fringilla cursus est, eu posuere mi hendrerit et. Etiam ac elit imperdiet, lobortis nibh id, faucibus nulla. Nullam ullamcorper urna est, vestibulum porta metus consectetur nec.
+
+Mauris suscipit elit orci, sed dictum elit adipiscing sit amet. Sed suscipit, magna ac hendrerit imperdiet, quam dui dapibus erat, in tristique enim quam non velit. Sed non accumsan ante. Proin eget sagittis ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam elementum lorem id purus rhoncus sagittis. Etiam eleifend diam tincidunt, vulputate risus ac, interdum eros. Vivamus vitae porttitor sapien. Vestibulum odio dolor, facilisis nec malesuada blandit, condimentum sit amet odio. Ut vestibulum ante et molestie euismod. Vivamus et dictum mauris, eu venenatis lacus. Suspendisse sodales commodo dapibus. Donec quis ligula sed justo tempor pretium. Curabitur quis aliquam nisl.
+
+Vestibulum venenatis, nisi at laoreet pulvinar, nibh mi dapibus lectus, nec consequat leo lectus ultricies quam. Sed id nunc ut sem imperdiet adipiscing. Etiam eros diam, malesuada placerat semper ac, semper non nulla. Aenean nec odio sit amet purus fringilla mollis. Cras malesuada eget massa at ultrices. Pellentesque venenatis nibh ut lacus fringilla, non placerat erat tincidunt. Phasellus non mauris vitae ante dignissim consequat. Vivamus et libero magna. Nullam in quam sed mauris cursus egestas ut sit amet ante. Maecenas augue neque, faucibus vitae tincidunt eu, condimentum sed erat. Curabitur lobortis dolor at tellus cursus sollicitudin. Integer vehicula molestie ante, ac molestie enim vestibulum id.
+
+Integer ac fringilla purus. Pellentesque dapibus dignissim augue vel mattis. Donec sed suscipit purus, vitae pulvinar eros. Sed at metus id eros aliquet dignissim varius sit amet metus. Etiam felis mi, porttitor non tincidunt in, fermentum sit amet metus. Sed fermentum ligula eget tellus laoreet interdum. Sed id nunc eget arcu imperdiet aliquet. Etiam at iaculis libero. Sed scelerisque massa in placerat molestie. Integer convallis pulvinar nisi, eget egestas sem condimentum ac. Sed sed ipsum quis tellus accumsan placerat. Nunc ultricies orci massa, a tristique sapien bibendum id.
+
+\end{document}
